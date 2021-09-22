@@ -1239,7 +1239,6 @@ typedef struct {
 	float drawTriggerDistances[MAX_ENTITIES + 1];
 
 	pmoveExt_t pmext;
-
 } cg_t;
 
 
@@ -2210,6 +2209,20 @@ extern vmCvar_t cg_compassY;
 extern vmCvar_t cg_zoomedSensLock;
 extern vmCvar_t cg_lagometerX;
 extern vmCvar_t cg_lagometerY;
+
+//unlagged - client options
+extern	vmCvar_t		cg_delag;
+extern	vmCvar_t		cg_debugDelag;
+extern	vmCvar_t		cg_drawBBox;
+extern	vmCvar_t		cg_cmdTimeNudge;
+extern	vmCvar_t		sv_fps;
+extern	vmCvar_t		cg_projectileNudge;
+extern	vmCvar_t		cg_optimizePrediction;
+extern	vmCvar_t		cl_timeNudge;
+extern	vmCvar_t		cg_latentSnaps;
+extern	vmCvar_t		cg_latentCmds;
+extern	vmCvar_t		cg_plOut;
+//unlagged - client options
 
 //static void CG_TimerSet_f(void);
 //static void CG_TimerReset_f(void);

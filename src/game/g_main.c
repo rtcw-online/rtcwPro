@@ -163,6 +163,12 @@ vmCvar_t url;
 
 vmCvar_t g_dbgRevive;
 
+//unlagged - server options
+vmCvar_t	g_delagHitscan;
+vmCvar_t	g_unlaggedVersion;
+vmCvar_t	g_truePing;
+//unlagged - server options
+
 // rtcwpro begin
 //S4NDM4NN - fix errors when sv_fps is adjusted
 vmCvar_t sv_screenshake;
@@ -322,8 +328,17 @@ cvarTable_t gameCvarTable[] = {
 	{ &g_warmup, "g_warmup", "20", CVAR_ARCHIVE, 0, qtrue  },
 	{ &g_doWarmup, "g_doWarmup", "0", CVAR_ARCHIVE, 0, qtrue  },
 
+//unlagged - server options
+	{ &g_delagHitscan, "g_delagHitscan", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qtrue },
+	{ &g_unlaggedVersion, "g_unlaggedVersion", "2.0", CVAR_ROM | CVAR_SERVERINFO, 0, qfalse },
+	{ &g_truePing, "g_truePing", "1", CVAR_ARCHIVE, 0, qtrue },
+	// it's CVAR_SYSTEMINFO so the client's sv_fps will be automagically set to its value
+	{ &sv_fps, "sv_fps", "20", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qfalse },
+//unlagged - server options
+
 	//S4NDM4NN - need to get sv_fps
-	{ &sv_fps, "sv_fps", "20", 0, 0,qfalse},
+	// moved to unlagged 
+	// { &sv_fps, "sv_fps", "20", 0, 0,qfalse},
 	// NERVE - SMF
 	{ &g_warmupLatch, "g_warmupLatch", "1", 0, 0, qfalse },
 

@@ -1856,8 +1856,9 @@ static void CG_DrawLagometer( void ) {
 		return;
 	}
 
-	if ( !cg_lagometer.integer || cgs.localServer ) {
-//	if(0) {
+//unlagged - misc
+	if ( !cg_lagometer.integer /* || cgs.localServer */) {
+//unlagged - misc
 		CG_DrawDisconnect();
 		return;
 	}

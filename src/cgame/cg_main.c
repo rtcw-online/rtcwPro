@@ -411,6 +411,20 @@ vmCvar_t cg_zoomedSensLock;
 vmCvar_t cg_lagometerX;
 vmCvar_t cg_lagometerY;
 
+//unlagged - client options
+vmCvar_t	cg_delag;
+vmCvar_t	cg_debugDelag;
+vmCvar_t	cg_drawBBox;
+vmCvar_t	cg_cmdTimeNudge;
+vmCvar_t	sv_fps;
+vmCvar_t	cg_projectileNudge;
+vmCvar_t	cg_optimizePrediction;
+vmCvar_t	cl_timeNudge;
+vmCvar_t	cg_latentSnaps;
+vmCvar_t	cg_latentCmds;
+vmCvar_t	cg_plOut;
+//unlagged - client options
+
 typedef struct {
 	vmCvar_t    *vmCvar;
 	char        *cvarName;

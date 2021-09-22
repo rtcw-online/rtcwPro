@@ -507,6 +507,10 @@ typedef struct {
 #define WEP_DROP_MEDIC 4
 #define WEP_DROP_LT 8
 
+//unlagged - true ping
+#define NUM_PING_SAMPLES 64
+//unlagged - true ping
+
 // client data that stays across multiple levels or tournament restarts
 // this is achieved by writing all the data to cvar strings at game shutdown
 // time and reading them back at connection time.  Anything added here
@@ -646,6 +650,18 @@ typedef struct {
 	int restrictedWeapon;
 	qboolean drawHitBoxes;
 	qboolean findMedic;
+//unlagged - lag simulation #2
+	int			latentSnaps;
+	int			latentCmds;
+	int			plOut;
+	usercmd_t	cmdqueue[MAX_LATENT_CMDS];
+	int			cmdhead;
+//unlagged - lag simulation #2
+//unlagged - true ping
+	int			realPing;
+	int			pingsamples[NUM_PING_SAMPLES];
+	int			samplehead;
+//unlagged - true ping
 } clientPersistant_t;
 
 // L0 - antilag port
@@ -815,6 +831,21 @@ struct gclient_s {
 	// revive anim bug fix
 	qboolean revive_animation_playing;
 	int movement_lock_begin_time;
+
+//unlagged - backward reconciliation #1
+	// the serverTime the button was pressed
+	// (stored before pmove_fixed changes serverTime)
+	int			attackTime;
+	// the head of the history queue
+	int			historyHead;
+	// the history queue
+	// crumbs - clientHistory_t	history[NUM_CLIENT_HISTORY];
+	// the client's saved position
+	// crumbs - clientHistory_t	saved;			// used to restore after time shift
+	// an approximation of the actual server time we received this
+	// command (not in 50ms increments)
+	int			frameOffset;
+//unlagged - backward reconciliation #1
 
 };
 
@@ -1604,6 +1635,13 @@ extern vmCvar_t	g_axisSpawnProtectionTime;
 extern vmCvar_t	g_alliedSpawnProtectionTime;
 extern vmCvar_t g_damageRadiusKnockback;
 extern vmCvar_t	g_dropWeapons;
+
+//unlagged - server options
+// some new server-side variables
+extern	vmCvar_t	g_delagHitscan;
+extern	vmCvar_t	g_unlaggedVersion;
+extern	vmCvar_t	g_truePing;
+//unlagged - server options
 
 //S4NDM4NN - fix errors when sv_fps is adjusted
 extern vmCvar_t sv_fps;

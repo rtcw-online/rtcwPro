@@ -39,6 +39,10 @@ If you have questions concerning this license or the applicable additional terms
 // 1.1b - TTimo SP linux release (+ MP updates)
 // 1.1b5 - Mac update merge in
 
+//unlagged - lag simulation #2
+#define MAX_LATENT_CMDS 64
+//unlagged - lag simulation #2
+
 #define NEW_ANIMS
 #define MAX_TEAMNAME    32
 
