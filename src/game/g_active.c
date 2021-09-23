@@ -1256,6 +1256,13 @@ void ClientThink_real( gentity_t *ent ) {
 //		G_Printf("serverTime >>>>>\n" );
 	}
 
+//unlagged - backward reconciliation #4
+	// frameOffset should be about the number of milliseconds into a frame 
+	// this command packet was received, depending on how fast the server
+	// does a G_RunFrame()
+	client->frameOffset = trap_Milliseconds() - level.frameStartTime;
+//unlagged - backward reconciliation #4
+
 //unlagged - lag simulation #3
 	// if the client wants to simulate outgoing packet loss
 	if ( client->pers.plOut ) {

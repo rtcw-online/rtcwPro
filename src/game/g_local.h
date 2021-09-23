@@ -815,6 +815,10 @@ struct gclient_s {
 	clientTrail_t saved_trail_node;
 	// antilag end
 
+//unlagged - backward reconciliation #1
+	int	frameOffset;
+//unlagged - backward reconciliation #1
+
 	gentity_t		*tempHead;	// Gordon: storing a temporary head for bullet head shot detection
 
 	pmoveExt_t	pmext;
