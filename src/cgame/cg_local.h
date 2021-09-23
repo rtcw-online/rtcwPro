@@ -2209,6 +2209,13 @@ extern vmCvar_t cg_drawFrags;
 extern vmCvar_t cg_fragsY;
 extern vmCvar_t cg_fragsWidth;
 
+//unlagged - client options
+extern	vmCvar_t sv_fps;
+extern	vmCvar_t cg_latentSnaps;
+extern	vmCvar_t cg_latentCmds;
+extern	vmCvar_t cg_plOut;
+//unlagged - client options
+
 //static void CG_TimerSet_f(void);
 //static void CG_TimerReset_f(void);
 

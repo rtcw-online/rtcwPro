@@ -649,6 +649,13 @@ typedef struct {
 	int restrictedWeapon;
 	qboolean drawHitBoxes;
 	qboolean findMedic;
+//unlagged - lag simulation #2
+	int			latentSnaps;
+	int			latentCmds;
+	int			plOut;
+	usercmd_t	cmdqueue[MAX_LATENT_CMDS];
+	int			cmdhead;
+//unlagged - lag simulation #2
 } clientPersistant_t;
 
 // L0 - antilag port

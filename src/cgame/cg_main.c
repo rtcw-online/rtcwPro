@@ -414,6 +414,13 @@ vmCvar_t cg_drawFrags;
 vmCvar_t cg_fragsY;
 vmCvar_t cg_fragsWidth;
 
+//unlagged - client options
+vmCvar_t	sv_fps;
+vmCvar_t	cg_latentSnaps;
+vmCvar_t	cg_latentCmds;
+vmCvar_t	cg_plOut;
+//unlagged - client options
+
 typedef struct {
 	vmCvar_t    *vmCvar;
 	char        *cvarName;
@@ -730,7 +737,15 @@ cvarTable_t cvarTable[] = {
 	{ &demo_controlsWindow, "demo_controlsWindow", "1", CVAR_ARCHIVE },
 	{ &demo_popupWindow, "demo_popupWindow", "1", CVAR_ARCHIVE },
 	{ &demo_showTimein, "demo_showTimein", "1", CVAR_ARCHIVE },
-	{ &demo_noAdvertisement, "demo_noAdvertisement", "0", CVAR_ARCHIVE }
+	{ &demo_noAdvertisement, "demo_noAdvertisement", "0", CVAR_ARCHIVE },
+
+//unlagged - client options
+	// this will be automagically copied from the server
+	{ &sv_fps, "sv_fps", "20", 0 },
+	{ &cg_latentSnaps, "cg_latentSnaps", "0", CVAR_USERINFO | CVAR_CHEAT },
+	{ &cg_latentCmds, "cg_latentCmds", "0", CVAR_USERINFO | CVAR_CHEAT },
+	{ &cg_plOut, "cg_plOut", "0", CVAR_USERINFO | CVAR_CHEAT },
+//unlagged - client options
 };
 int cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
 

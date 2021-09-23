@@ -1256,6 +1256,55 @@ void ClientThink_real( gentity_t *ent ) {
 //		G_Printf("serverTime >>>>>\n" );
 	}
 
+//unlagged - lag simulation #3
+	// if the client wants to simulate outgoing packet loss
+	if ( client->pers.plOut ) {
+		// see if a random value is below the threshhold
+		float thresh = (float)client->pers.plOut / 100.0f;
+		if ( random() < thresh ) {
+			// do nothing at all if it is - this is a lost command
+			return;
+		}
+	}
+//unlagged - lag simulation #3
+
+//unlagged - lag simulation #2
+	// keep a queue of past commands
+	client->pers.cmdqueue[client->pers.cmdhead] = client->pers.cmd;
+	client->pers.cmdhead++;
+	if ( client->pers.cmdhead >= MAX_LATENT_CMDS ) {
+		client->pers.cmdhead -= MAX_LATENT_CMDS;
+	}
+
+	// if the client wants latency in commands (client-to-server latency)
+	if ( client->pers.latentCmds ) {
+		// save the actual command time
+		int time = ucmd->serverTime;
+
+		// find out which index in the queue we want
+		int cmdindex = client->pers.cmdhead - client->pers.latentCmds - 1;
+		while ( cmdindex < 0 ) {
+			cmdindex += MAX_LATENT_CMDS;
+		}
+
+		// read in the old command
+		client->pers.cmd = client->pers.cmdqueue[cmdindex];
+
+		// adjust the real ping to reflect the new latency
+		// TODO: client->pers.realPing += time - ucmd->serverTime;
+	}
+//unlagged - lag simulation #2
+
+//unlagged - lag simulation #1
+	// if the client is adding latency to received snapshots (server-to-client latency)
+	if ( client->pers.latentSnaps ) {
+		// adjust the real ping
+		// TODO: client->pers.realPing += client->pers.latentSnaps * (1000 / sv_fps.integer);
+		// adjust the attack time so backward reconciliation will work
+		// TODO: client->attackTime -= client->pers.latentSnaps * (1000 / sv_fps.integer);
+	}
+//unlagged - lag simulation #1
+
 	msec = ucmd->serverTime - client->ps.commandTime;
 	// following others may result in bad times, but we still want
 	// to check for follow toggles
