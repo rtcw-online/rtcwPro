@@ -1268,6 +1268,34 @@ void ClientThink_real( gentity_t *ent ) {
 	}
 //unlagged - lag simulation #3
 
+//unlagged - true ping
+	// save the estimated ping in a queue for averaging later
+
+	// we use level.previousTime to account for 50ms lag correction
+	// besides, this will turn out numbers more like what players are used to
+	client->pers.pingsamples[client->pers.samplehead] = level.previousTime + client->frameOffset - ucmd->serverTime;
+	client->pers.samplehead++;
+	if ( client->pers.samplehead >= NUM_PING_SAMPLES ) {
+		client->pers.samplehead -= NUM_PING_SAMPLES;
+	}
+
+	// initialize the real ping
+	if ( g_truePing.integer ) {
+		int i, sum = 0;
+
+		// get an average of the samples we saved up
+		for ( i = 0; i < NUM_PING_SAMPLES; i++ ) {
+			sum += client->pers.pingsamples[i];
+		}
+
+		client->pers.realPing = sum / NUM_PING_SAMPLES;
+	}
+	else {
+		// if g_truePing is off, use the normal ping
+		client->pers.realPing = client->ps.ping;
+	}
+//unlagged - true ping
+
 //unlagged - lag simulation #2
 	// keep a queue of past commands
 	client->pers.cmdqueue[client->pers.cmdhead] = client->pers.cmd;
@@ -1304,6 +1332,13 @@ void ClientThink_real( gentity_t *ent ) {
 		// TODO: client->attackTime -= client->pers.latentSnaps * (1000 / sv_fps.integer);
 	}
 //unlagged - lag simulation #1
+
+//unlagged - true ping
+	// make sure the true ping is over 0 - with cl_timenudge it can be less
+	if ( client->pers.realPing < 0 ) {
+		client->pers.realPing = 0;
+	}
+//unlagged - true ping
 
 	msec = ucmd->serverTime - client->ps.commandTime;
 	// following others may result in bad times, but we still want

@@ -277,6 +277,11 @@ vmCvar_t g_thinkStateLevelTime;
 vmCvar_t g_endStateLevelTime;
 vmCvar_t g_thinkSnapOrigin;
 
+//unlagged - server options
+vmCvar_t	g_unlaggedVersion;
+vmCvar_t	g_truePing;
+//unlagged - server options
+
 cvarTable_t gameCvarTable[] = {
 	// don't override the cheat state set by the system
 	{ &g_cheats, "sv_cheats", "", 0, qfalse },
@@ -501,6 +506,12 @@ cvarTable_t gameCvarTable[] = {
 	{ &g_bodiesGrabFlags, "g_bodiesGrabFlags", "1", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_mapScriptDirectory, "g_mapScriptDirectory", "", 0, qfalse },
 	{ &g_damageRadiusKnockback, "g_damageRadiusKnockback", "1000", 0, 0, qtrue },
+	
+//unlagged - server options
+	{ &g_unlaggedVersion, "g_unlaggedVersion", "2.0", CVAR_ROM | CVAR_SERVERINFO, 0, qfalse },
+	{ &g_truePing, "g_truePing", "1", CVAR_ARCHIVE, 0, qtrue },
+//unlagged - server options
+	
 	//{ &g_thinkStateLevelTime, "g_thinkStateLevelTime", "1", CVAR_ARCHIVE | CVAR_LATCH, 0, qfalse },
 	//{ &g_thinkSnapOrigin, "g_thinkSnapOrigin", "1", CVAR_ARCHIVE | CVAR_LATCH, 0, qfalse },
 	//{ &g_endStateLevelTime, "g_endStateLevelTime", "1", CVAR_ARCHIVE | CVAR_LATCH, 0, qfalse },

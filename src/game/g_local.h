@@ -580,6 +580,10 @@ typedef struct {
 #define MAX_NETNAME         36
 #define MAX_VOTE_COUNT      3
 
+//unlagged - true ping
+#define NUM_PING_SAMPLES 64
+//unlagged - true ping
+
 #define PICKUP_ACTIVATE 0   // pickup items only when using "+activate"
 #define PICKUP_TOUCH    1   // pickup items when touched
 #define PICKUP_FORCE    2   // pickup the next item when touched (and reset to PICKUP_ACTIVATE when done)
@@ -656,6 +660,11 @@ typedef struct {
 	usercmd_t	cmdqueue[MAX_LATENT_CMDS];
 	int			cmdhead;
 //unlagged - lag simulation #2
+//unlagged - true ping
+	int			realPing;
+	int			pingsamples[NUM_PING_SAMPLES];
+	int			samplehead;
+//unlagged - true ping
 } clientPersistant_t;
 
 // L0 - antilag port
@@ -1678,6 +1687,12 @@ extern vmCvar_t g_mapScriptDirectory;
 extern vmCvar_t g_thinkStateLevelTime;
 extern vmCvar_t g_endStateLevelTime;
 extern vmCvar_t g_thinkSnapOrigin;
+
+//unlagged - server options
+// some new server-side variables
+extern	vmCvar_t	g_unlaggedVersion;
+extern	vmCvar_t	g_truePing;
+//unlagged - server options
 
 void    trap_Printf( const char *fmt );
 void    trap_Error( const char *fmt );
