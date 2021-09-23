@@ -1584,7 +1584,9 @@ void ClientUserinfoChanged( int clientNum ) {
 	}
 	s = Info_ValueForKey( userinfo, "cg_uinfo" );
 	//sscanf(s, "%i %i %i", &client->pers.clientFlags, &client->pers.clientTimeNudge, &client->pers.clientMaxPackets);
-	sscanf(s, "%i %i %i %s", &client->pers.clientFlags, &client->pers.clientTimeNudge, &client->pers.clientMaxPackets, client->sess.guid);
+	//sscanf(s, "%i %i %i %s", &client->pers.clientFlags, &client->pers.clientTimeNudge, &client->pers.clientMaxPackets, client->sess.guid);
+	sscanf(s, "%i %i %i %i %i %i %s", &client->pers.clientFlags, &client->pers.clientTimeNudge, &client->pers.clientMaxPackets, 
+		&client->pers.hitSoundType, &client->pers.hitSoundBodyStyle, &client->pers.hitSoundHeadStyle, client->sess.guid);
 
 	if (Q_stricmp(client->sess.guid,NO_GUID)==0 ) {
         trap_DropClient(clientNum, "Empty or invalid rtcwkey");
@@ -2587,8 +2589,8 @@ void ClientSpawn( gentity_t *ent, qboolean revived ) {
 
 	// positively link the client, even if the command times are weird
 	if ( ent->client->sess.sessionTeam != TEAM_SPECTATOR ) {
-		//BG_PlayerStateToEntityState( &client->ps, &ent->s, qtrue );
-		BG_PlayerStateToEntityStatePro(&client->ps, &ent->s, level.time, qtrue); // RTCWPro
+		BG_PlayerStateToEntityState( &client->ps, &ent->s, qtrue );
+		//BG_PlayerStateToEntityStatePro(&client->ps, &ent->s, level.time, qtrue); // RTCWPro
 		VectorCopy( ent->client->ps.origin, ent->r.currentOrigin );
 		trap_LinkEntity( ent );
 	}
@@ -2597,8 +2599,8 @@ void ClientSpawn( gentity_t *ent, qboolean revived ) {
 	ClientEndFrame( ent );
 
 	// clear entity state values
-	//BG_PlayerStateToEntityState( &client->ps, &ent->s, qtrue );
-	BG_PlayerStateToEntityStatePro(&client->ps, &ent->s, level.time, qtrue); // RTCWPro
+	BG_PlayerStateToEntityState( &client->ps, &ent->s, qtrue );
+	//BG_PlayerStateToEntityStatePro(&client->ps, &ent->s, level.time, qtrue); // RTCWPro
 
 	// show_bug.cgi?id=569
 	//G_ResetMarkers( ent );

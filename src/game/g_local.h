@@ -624,6 +624,9 @@ typedef struct {
 	unsigned int clientFlags;           // Client settings that need server involvement
 	unsigned int clientMaxPackets;      // Client com_maxpacket settings
 	unsigned int clientTimeNudge;       // Client cl_timenudge settings
+	unsigned int hitSoundType;
+	unsigned int hitSoundBodyStyle;
+	unsigned int hitSoundHeadStyle;
 	int cmd_debounce;                   // Dampening of command spam
 	unsigned int invite;                // Invitation to a team to join
 	int throwingKnives;
@@ -1184,6 +1187,7 @@ int getYearFromCYear(int cYear);
 int getDaysInMonth(int monthIndex);
 char* TablePrintableColorName(const char* name, int maxlength);
 qboolean FileExists(char* filename, char* directory, char* expected_extension, qboolean can_have_extension);
+qboolean G_SpawnEnts(gentity_t* ent);
 
 //
 // g_combat.c
@@ -1702,6 +1706,9 @@ extern vmCvar_t	g_hsDamage;
 extern vmCvar_t g_spawnOffset; // random spawn offset for both teams, between 1 and cvar integer - 1
 extern vmCvar_t g_bodiesGrabFlags;
 extern vmCvar_t g_mapScriptDirectory;
+extern vmCvar_t g_thinkStateLevelTime;
+extern vmCvar_t g_endStateLevelTime;
+extern vmCvar_t g_thinkSnapOrigin;
 
 void    trap_Printf( const char *fmt );
 void    trap_Error( const char *fmt );

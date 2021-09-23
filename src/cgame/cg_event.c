@@ -233,8 +233,19 @@ static void CG_Obituary( entityState_t *ent ) {
 				s = va( "%s %s", CG_TranslateString( "You killed" ), targetName );
 			}
 		}
-		CG_PriorityCenterPrint( s, SCREEN_HEIGHT * 0.75, BIGCHAR_WIDTH * 0.6, 1 );
+
+		// RTCWPro
+		if (cg_drawFrags.integer) {
+			if (cg_fragsY.integer) {
+				CG_PriorityCenterPrint(s, cg_fragsY.integer * 0.75, cg_fragsWidth.integer * 0.6, 1);
+			}
+			else {
+				CG_PriorityCenterPrint(s, SCREEN_HEIGHT * 0.75, cg_fragsWidth.integer * 0.6, 1);
+			}
+		}
+		//CG_PriorityCenterPrint(s, SCREEN_HEIGHT * 0.75, BIGCHAR_WIDTH * 0.6, 1);
 		// print the text message as well
+		// RTCWPro end
 	}
 
 	// check for double client messages
@@ -1365,72 +1376,6 @@ void CG_BatDeath( centity_t *cent ) {
 }
 
 /*
-===============
-RTCWPro
-
-CG_PlayHitSound
-===============
-*/
-void CG_PlayHitSound(const int clientNum, const int hitSound) { 
-
-	if (!cg_hitsounds.integer) {
-		return;
-	}
-
-	// Are we spectating someone?
-	if (cg.snap->ps.clientNum != cg.clientNum && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && 
-		!(cg.snap->ps.pm_flags & PMF_LIMBO)) 
-	{
-		return;
-	}
-
-	// Is the event for the current client (might be the player or a player being spectated)
-	if (clientNum != cg.snap->ps.clientNum) {
-		return;
-	}
-
-	switch (hitSound)
-	{
-	case HIT_TEAMSHOT:
-		if (cg_hitsounds.integer & HITSOUND_TEAM) {
-			trap_S_StartLocalSound(cgs.media.teamShot, CHAN_LOCAL_SOUND);
-		}
-		break;
-	case HIT_HEADSHOT:
-		if (cg_hitsounds.integer & HITSOUND_HEAD) {
-
-			if (cg_hitsoundHeadStyle.integer == 1) {
-				trap_S_StartLocalSound(cgs.media.headShot1, CHAN_LOCAL_SOUND);
-			}
-			else if (cg_hitsoundHeadStyle.integer > 1) {
-				trap_S_StartLocalSound(cgs.media.headShot2, CHAN_LOCAL_SOUND);
-			}
-			else {
-				trap_S_StartLocalSound(cgs.media.headShot1, CHAN_LOCAL_SOUND);
-			}
-		}
-		break;
-	case HIT_BODYSHOT:
-		if (cg_hitsounds.integer & HITSOUND_BODY) {
-
-			if (cg_hitsoundBodyStyle.integer == 1) {
-				trap_S_StartLocalSound(cgs.media.bodyShot1, CHAN_LOCAL_SOUND);
-			}
-			else if (cg_hitsoundBodyStyle.integer > 1) {
-				trap_S_StartLocalSound(cgs.media.bodyShot2, CHAN_LOCAL_SOUND);
-			}
-			else {
-				trap_S_StartLocalSound(cgs.media.bodyShot1, CHAN_LOCAL_SOUND);
-			}
-		}
-		break;
-	default:
-		CG_Printf("Unkown hitsound: %i\n", hitSound);
-		break;
-	}
-}
-
-/*
 ==============
 CG_EntityEvent
 
@@ -1910,12 +1855,6 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 		CG_VenomFire( es, qtrue );
 		break;
 
-	// RTCWPro - hijack this event to comm hitsounds
-	case EV_BULLET:
-		CG_PlayHitSound(es->clientNum, es->eventParm);
-		break;
-	// RTCWPro end
-
 	case EV_NOITEM:
 		DEBUGNAME( "EV_NOITEM" );
 		if ( es->number == cg.snap->ps.clientNum ) {
@@ -2052,7 +1991,7 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 		CG_FireWeapon( cent );
 		break;
 
-//----(SA)	added
+//----(SA)	added // RTCWPro - hijack this for hitsounds
 	case EV_FIRE_QUICKGREN:
 		// testing.  no client side effect yet
 		break;
@@ -2745,8 +2684,6 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 	}
 }
 
-// RTCWPro - new one below
-#if 0
 /*
 ==============
 CG_CheckEvents
@@ -2824,71 +2761,6 @@ skipEvent:
 
 	// set the event back so we don't think it's changed next frame (unless it really has)
 	cent->currentState.event = cent->previousEvent;
-}
-#endif
-
-/*
-==============
-RTCWPro
-
-CG_CheckEvents
-==============
-*/
-void CG_CheckEvents(centity_t* cent) {
-	int i, event;
-
-	// calculate the position at exactly the frame time
-	BG_EvaluateTrajectory(&cent->currentState.pos, cg.snap->serverTime, cent->lerpOrigin);
-	CG_SetEntitySoundPosition(cent);
-
-	// check for event-only entities
-	if (cent->currentState.eType >= ET_EVENTS)
-	{
-		if (cent->previousEvent)
-		{
-			return;     // already fired
-		}
-
-		cent->previousEvent = 1;
-		cent->currentState.event = cent->currentState.eType - ET_EVENTS;
-
-		CG_EntityEvent(cent, cent->lerpOrigin);
-	}
-	else
-	{
-		// Entities that make it here are Not TempEntities.
-		//      As far as we could tell, for all non-TempEntities, the
-		//      circular 'events' list contains the valid events.  So we
-		//      skip processing the single 'event' field and go straight
-		//      to the circular list.
-
-		// check the sequencial list
-		// if we've added more events than can fit into the list, make sure we only add them once
-		if (cent->currentState.eventSequence < cent->previousEventSequence)
-		{
-			cent->previousEventSequence -= (1 << 8); // eventSequence is sent as an 8-bit through network stream
-		}
-
-		if (cent->currentState.eventSequence - cent->previousEventSequence > MAX_EVENTS)
-		{
-			cent->previousEventSequence = cent->currentState.eventSequence - MAX_EVENTS;
-		}
-
-		for (i = cent->previousEventSequence; i != cent->currentState.eventSequence; i++)
-		{
-			event = cent->currentState.events[i & (MAX_EVENTS - 1)];
-
-			cent->currentState.event = event;
-			cent->currentState.eventParm = cent->currentState.eventParms[i & (MAX_EVENTS - 1)];
-
-			CG_EntityEvent(cent, cent->lerpOrigin);
-		}
-
-		cent->previousEventSequence = cent->currentState.eventSequence;
-
-		// set the event back so we don't think it's changed next frame (unless it really has)
-		cent->currentState.event = cent->previousEvent;
-	}
 }
 
 /*
