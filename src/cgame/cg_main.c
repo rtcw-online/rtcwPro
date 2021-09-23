@@ -742,9 +742,9 @@ cvarTable_t cvarTable[] = {
 //unlagged - client options
 	// this will be automagically copied from the server
 	{ &sv_fps, "sv_fps", "20", 0 },
-	{ &cg_latentSnaps, "cg_latentSnaps", "0", CVAR_USERINFO | CVAR_CHEAT },
-	{ &cg_latentCmds, "cg_latentCmds", "0", CVAR_USERINFO | CVAR_CHEAT },
-	{ &cg_plOut, "cg_plOut", "0", CVAR_USERINFO | CVAR_CHEAT },
+	{ &cg_latentSnaps, "cg_latentSnaps", "0", CVAR_ARCHIVE },
+	{ &cg_latentCmds, "cg_latentCmds", "0", CVAR_ARCHIVE },
+	{ &cg_plOut, "cg_plOut", "0", CVAR_ARCHIVE },
 //unlagged - client options
 };
 int cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
