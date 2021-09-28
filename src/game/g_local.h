@@ -699,9 +699,12 @@ struct gclient_s {
 
 	qboolean noclip;
 
-	int lastCmdTime;                // level.time of last usercmd_t, for EF_CONNECTION
+	//unlagged - smooth clients #1
+	//int lastCmdTime;              // level.time of last usercmd_t, for EF_CONNECTION
 									// we can't just use pers.lastCommand.time, because
 									// of the g_sycronousclients case
+	//unlagged - smooth clients #1
+
 	int buttons;
 	int oldbuttons;
 	int latched_buttons;
@@ -819,6 +822,10 @@ struct gclient_s {
 	qboolean revive_animation_playing;
 	int movement_lock_begin_time;
 
+	//unlagged - smooth clients #1
+	// the last frame number we got an update from this client
+	int	lastUpdateFrame;
+	//unlagged - smooth clients #1
 };
 
 //
@@ -1926,6 +1933,11 @@ void G_StoreTrail(gentity_t* ent);
 void G_TimeShiftAllClients(int time, gentity_t* skip);
 void G_UnTimeShiftAllClients(gentity_t* skip);
 //void G_HistoricalTrace( gentity_t* ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask );
+
+//unlagged - g_unlagged.c
+void G_PredictPlayerMove(gentity_t *ent, float frametime);
+//unlagged - g_unlagged.c
+
 
 // End
 

@@ -1256,6 +1256,12 @@ void ClientThink_real( gentity_t *ent ) {
 //		G_Printf("serverTime >>>>>\n" );
 	}
 
+	//unlagged - smooth clients #1
+	// keep track of this for later - we'll use this to decide whether or not
+	// to send extrapolated positions for this client
+	client->lastUpdateFrame = level.framenum;
+	//unlagged - smooth clients #1
+
 	msec = ucmd->serverTime - client->ps.commandTime;
 	// following others may result in bad times, but we still want
 	// to check for follow toggles
@@ -1610,13 +1616,18 @@ void ClientThink_real( gentity_t *ent ) {
 		ent->r.eventTime = level.time;
 	}
 
-	// RTCWPro
-	// Ridah, fixes jittery zombie movement
-	if ( g_smoothClients.integer ) {
-		BG_PlayerStateToEntityStateExtraPolate( &ent->client->ps, &ent->s, ent->client->ps.commandTime, qtrue );
-	} else {
+	//unlagged - smooth clients #2
+	// clients no longer do extrapolation if cg_smoothClients is 1, because
+	// skip correction is all handled server-side now
+	// since that's the case, it makes no sense to store the extra info
+	// in the client's snapshot entity, so let's save a little bandwidth
+	// if (g_smoothClients.integer) {
+	// 	BG_PlayerStateToEntityStateExtraPolate( &ent->client->ps, &ent->s, ent->client->ps.commandTime, qtrue );
+	// }
+	// else {
 		BG_PlayerStateToEntityState( &ent->client->ps, &ent->s, qtrue );
-	}
+	//	}
+	//unlagged - smooth clients #2
 
 	/*if (g_thinkStateLevelTime.integer) 
 	{
@@ -1806,9 +1817,12 @@ void ClientThink( int clientNum ) {
 	//trap_GetUsercmd( clientNum, &ent->client->pers.cmd );
 	trap_GetUsercmd(clientNum, &newcmd);
 
+	//unlagged - smooth clients #1
+	// this is handled differently now
 	// mark the time we got info, so we can display the
 	// phone jack if they don't get any for a while
-	ent->client->lastCmdTime = level.time;
+	//ent->client->lastCmdTime = level.time;
+	//unlagged - smooth clients #1
 
 	if (G_DoAntiwarp(ent))
 	{
@@ -2157,6 +2171,10 @@ while a slow client may have multiple ClientEndFrame between ClientThink.
 void ClientEndFrame( gentity_t *ent ) {
 	int i;
 
+	//unlagged - smooth clients #1
+	int frames;
+	//unlagged - smooth clients #1
+
 	// used for informing of speclocked teams.
 	// Zero out here and set only for certain specs
 	ent->client->ps.powerups[PW_BLACKOUT] = 0;
@@ -2235,38 +2253,59 @@ void ClientEndFrame( gentity_t *ent ) {
 	// apply all the damage taken this frame
 	P_DamageFeedback( ent );
 
+	//unlagged - smooth clients #1
+	// this is handled differently now
 	// add the EF_CONNECTION flag if we haven't gotten commands recently
-	if ( level.time - ent->client->lastCmdTime > 1000 ) {
-		ent->s.eFlags |= EF_CONNECTION;
-	} else {
-		ent->s.eFlags &= ~EF_CONNECTION;
-	}
+	// if ( level.time - ent->client->lastCmdTime > 1000 ) {
+	// 	ent->s.eFlags |= EF_CONNECTION;
+	// } else {
+	// 	ent->s.eFlags &= ~EF_CONNECTION;
+	// }
+	//unlagged - smooth clients #1
 
 	ent->client->ps.stats[STAT_HEALTH] = ent->health;   // FIXME: get rid of ent->health...
 
 	G_SetClientSound( ent );
 
-	// set the latest infor
-
-	// RTCWPro
-	// Ridah, fixes jittery zombie movement
-	if ( g_smoothClients.integer ) {
-		BG_PlayerStateToEntityStateExtraPolate( &ent->client->ps, &ent->s, ent->client->ps.commandTime, ( ( ent->r.svFlags & SVF_CASTAI ) == 0 ) );
-	} else {
+	// set the latest information
+	//unlagged - smooth clients #2
+	// clients no longer do extrapolation if cg_smoothClients is 1, because
+	// skip correction is all handled server-side now
+	// since that's the case, it makes no sense to store the extra info
+	// in the client's snapshot entity, so let's save a little bandwidth
+	// if ( g_smoothClients.integer ) {
+	// 	BG_PlayerStateToEntityStateExtraPolate( &ent->client->ps, &ent->s, ent->client->ps.commandTime, ( ( ent->r.svFlags & SVF_CASTAI ) == 0 ) );
+	// } else {
 		BG_PlayerStateToEntityState( &ent->client->ps, &ent->s, ( ( ent->r.svFlags & SVF_CASTAI ) == 0 ) );
+	// }
+	//unlagged - smooth clients #2
+
+	SendPendingPredictableEvents( &ent->client->ps );
+
+	//unlagged - smooth clients #1
+	// mark as not missing updates initially
+	ent->client->ps.eFlags &= ~EF_CONNECTION;
+
+	// see how many frames the client has missed
+	frames = level.framenum - ent->client->lastUpdateFrame - 1;
+
+	// don't extrapolate more than two frames
+	if ( frames > 2 ) {
+		frames = 2;
+
+		// if they missed more than two in a row, show the phone jack
+		ent->client->ps.eFlags |= EF_CONNECTION;
+		ent->s.eFlags |= EF_CONNECTION;
 	}
 
-	/*if (g_endStateLevelTime.integer) 
-	{
-		BG_PlayerStateToEntityStatePro(&ent->client->ps, &ent->s, level.time, qfalse);
+	// did the client miss any frames?
+	if ( frames > 0 && g_smoothClients.integer ) {
+		// yep, missed one or more, so extrapolate the player's movement
+		G_PredictPlayerMove( ent, (float)frames / sv_fps.integer );
+		// save network bandwidth
+		SnapVector( ent->s.pos.trBase );
 	}
-	else
-	{
-		BG_PlayerStateToEntityStatePro(&ent->client->ps, &ent->s, ent->client->ps.commandTime, qfalse);
-	}*/
-	// RTCWPro end
-
-	//SendPendingPredictableEvents( &ent->client->ps );
+	//unlagged - smooth clients #1
 
 	// DHM - Nerve :: If it's been a couple frames since being revived, and props_frame_state
 	//					wasn't reset, go ahead and reset it

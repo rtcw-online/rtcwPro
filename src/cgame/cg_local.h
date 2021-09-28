@@ -2026,7 +2026,10 @@ extern vmCvar_t cg_noVoiceText;                     // NERVE - SMF
 extern vmCvar_t cg_enableBreath;
 extern vmCvar_t cg_autoactivate;
 extern vmCvar_t cg_emptyswitch;
-extern vmCvar_t cg_smoothClients;
+//unlagged - smooth clients #2
+// this is done server-side now
+//extern	vmCvar_t		cg_smoothClients;
+//unlagged - smooth clients #2
 extern vmCvar_t pmove_fixed;
 extern vmCvar_t pmove_msec;
 
@@ -2208,6 +2211,9 @@ extern vmCvar_t cg_lagometerY;
 extern vmCvar_t cg_drawFrags;
 extern vmCvar_t cg_fragsY;
 extern vmCvar_t cg_fragsWidth;
+//unlagged - client options
+extern	vmCvar_t sv_fps;
+//unlagged - client options
 
 //static void CG_TimerSet_f(void);
 //static void CG_TimerReset_f(void);

@@ -207,7 +207,10 @@ vmCvar_t cg_enableBreath;
 vmCvar_t cg_autoactivate;
 vmCvar_t cg_blinktime;      //----(SA)	added
 
-vmCvar_t cg_smoothClients;
+//unlagged - smooth clients #2
+// this is done server-side now
+//vmCvar_t 	cg_smoothClients;
+//unlagged - smooth clients #2
 vmCvar_t pmove_fixed;
 vmCvar_t pmove_msec;
 
@@ -413,6 +416,9 @@ vmCvar_t cg_lagometerY;
 vmCvar_t cg_drawFrags;
 vmCvar_t cg_fragsY;
 vmCvar_t cg_fragsWidth;
+//unlagged - client options
+vmCvar_t sv_fps;
+//unlagged - client options
 
 typedef struct {
 	vmCvar_t    *vmCvar;
@@ -533,7 +539,10 @@ cvarTable_t cvarTable[] = {
 	{ &cg_timescaleFadeEnd, "cg_timescaleFadeEnd", "1", 0},
 	{ &cg_timescaleFadeSpeed, "cg_timescaleFadeSpeed", "0", 0},
 	{ &cg_timescale, "timescale", "1", 0},
-//	{ &cg_smoothClients, "cg_smoothClients", "0", CVAR_USERINFO | CVAR_ARCHIVE},
+	//unlagged - smooth clients #2
+	// this is done server-side now
+	//	{ &cg_smoothClients, "cg_smoothClients", "0", CVAR_USERINFO | CVAR_ARCHIVE},
+	//unlagged - smooth clients #2
 	{ &cg_cameraMode, "com_cameraMode", "0", CVAR_CHEAT},
 
 	{ &pmove_fixed, "pmove_fixed", "0", 0},
@@ -724,6 +733,11 @@ cvarTable_t cvarTable[] = {
 	{ &cg_drawFrags, "cg_drawFrags", "1", CVAR_ARCHIVE },
 	{ &cg_fragsY, "cg_fragsY", "0", CVAR_ARCHIVE },
 	{ &cg_fragsWidth, "cg_fragsWidth", "16", CVAR_ARCHIVE },
+
+	//unlagged - client options
+	// this will be automagically copied from the server
+	{ &sv_fps, "sv_fps", "20", 0 },
+	//unlagged - client options
 
 	// RTCWPro - complete OSP demo features
 	{ &demo_infoWindow, "demo_infoWindow", "0", CVAR_ARCHIVE },
